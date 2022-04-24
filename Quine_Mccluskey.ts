@@ -94,7 +94,7 @@ const compararGrupos = (grupo1: Array<string>, grupo2: Array<string>,MARCADOS:Se
 (function main() {
   const prompt = require("prompt-sync")();
   let miniterminos:Array<number> = prompt("Ingresa los miniterminos: ").split(",").map(minitermino => parseInt(minitermino));
-  const cantidadVariables: number = Math.ceil(Math.sqrt(Math.max(...miniterminos)));
+  const cantidadVariables: number = Math.max(...miniterminos).toString(2).length;
   let grupos: string[][] = [];
   let gruposAuxiliar: string[][] = [];
   for (let i = 0; i <= cantidadVariables; i++) {
