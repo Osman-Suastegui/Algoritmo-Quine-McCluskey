@@ -90,11 +90,19 @@ const compararGrupos = (grupo1: Array<string>, grupo2: Array<string>,MARCADOS:Se
   let nuevosValoresArray: Array<string> = Array.from(nuevosValores);
   return [seHizoAlgunaDiferencia,nuevosValoresArray];
 }
+const contarCantidadVariables = (N:number):number => {
+  let c :number = 0;
+  while (N > 0) {
+    N >>= 1;
+    c++;
+  }
+  return c
+}
 
 (function main() {
   const prompt = require("prompt-sync")();
   let miniterminos:Array<number> = prompt("Ingresa los miniterminos: ").split(",").map(minitermino => parseInt(minitermino));
-  const cantidadVariables: number = Math.max(...miniterminos).toString(2).length;
+  const cantidadVariables: number = contarCantidadVariables(Math.max(...miniterminos))
   let grupos: string[][] = [];
   let gruposAuxiliar: string[][] = [];
   for (let i = 0; i <= cantidadVariables; i++) {
