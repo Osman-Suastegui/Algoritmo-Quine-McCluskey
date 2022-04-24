@@ -1,4 +1,3 @@
-// crea una funcion decimal_binario
 const decimalBinario = (numero: number, cantidadBits:number): string => {
   let binario: string = "";
 
@@ -94,9 +93,7 @@ const compararGrupos = (grupo1: Array<string>, grupo2: Array<string>,MARCADOS:Se
 }
 
 (function main() {
-  // get a data from the console
   const prompt = require("prompt-sync")();
-  // let miniterminos: Array<number> = "1,3,4,5,9,11,12,13,14,15"
   let miniterminos:Array<number> = prompt("Ingresa los miniterminos: ").split(",").map(minitermino => parseInt(minitermino));
   const cantidadVariables: number = Math.ceil(Math.sqrt(Math.max(...miniterminos)));
   let grupos: string[][] = [];
