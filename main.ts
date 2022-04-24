@@ -87,7 +87,6 @@ const compararGrupos = (grupo1: Array<string>, grupo2: Array<string>,MARCADOS:Se
       }
     }
   }
-  // convierte nuevosValores a un array
   let nuevosValoresArray: Array<string> = Array.from(nuevosValores);
   return [seHizoAlgunaDiferencia,nuevosValoresArray];
 }
