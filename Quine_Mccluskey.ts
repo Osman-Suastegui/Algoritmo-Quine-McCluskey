@@ -99,9 +99,27 @@ const contarCantidadVariables = (N:number):number => {
   return c
 }
 
-(function main() {
-  const prompt = require("prompt-sync")();
-  let miniterminos:Array<number> = prompt("Ingresa los miniterminos: ").split(",").map(minitermino => parseInt(minitermino));
+const mostrarResultadoLetras = (resultadoBinario:Set<string>):string => {
+  let resultadoLetras: Array<string> = [];
+
+   resultadoBinario.forEach(binario => {
+    let termino: string = "";
+    for(let i = 0; i < binario.length; i++ ){
+      if(binario[i] == "-")continue;
+      if(binario[i] == "0") termino +=  String.fromCharCode(65 + i) + "'"; 
+      else termino += String.fromCharCode(65 + i);
+    }
+    resultadoLetras.push(termino);
+  })
+
+   return resultadoLetras.join(" + ");
+}
+
+document.getElementById("btnCalcular")?.addEventListener("click", () => {
+  let m:string = (<HTMLInputElement>document.getElementById("miniterminos")).value;
+  console.log(m)
+  // const prompt = require("prompt-sync")();
+  let miniterminos:Array<number> = m.split(",").map(minitermino => parseInt(minitermino));
   const cantidadVariables: number = contarCantidadVariables(Math.max(...miniterminos))
   let grupos: string[][] = [];
   let gruposAuxiliar: string[][] = [];
@@ -112,7 +130,7 @@ const contarCantidadVariables = (N:number):number => {
   grupos = formarGrupos(miniterminos, grupos);
   let seHizoAlgunaDiferencia: boolean = true;
   let seHizoAlgunaDiferenciaAux: boolean = true;
-  let primosImplicantes: Array<string> = [];
+  let PRM_IMP: Array<string> = [];
   
   while (seHizoAlgunaDiferencia) {
     let TODOS: Set<string> = new Set();
@@ -128,39 +146,23 @@ const contarCantidadVariables = (N:number):number => {
       if (seHizoAlgunaDiferenciaAux) seHizoAlgunaDiferencia = true;
 
     }
-    TODOS.forEach(binario => !MARCADOS.has(binario) ? primosImplicantes.push(binario) : null);
+    TODOS.forEach(binario => !MARCADOS.has(binario) ? PRM_IMP.push(binario) : null);
     grupos = [...gruposAuxiliar];
     gruposAuxiliar = gruposAuxiliar.map( _ => []);
-
   }
   let tablaMarcados :number[][] = [];
   for(let i = 0 ; i <= Math.pow(2,cantidadVariables); i++) tablaMarcados.push([0,0]);
-    
-  for(let i = 0 ; i < primosImplicantes.length ; i++){
-    convertirBinarioguion([...primosImplicantes[i]]).forEach(binario => {
+  
+  //MARCAMOS LA TABLA
+  for(let i = 0 ; i < PRM_IMP.length ; i++){
+    convertirBinarioguion([...PRM_IMP[i]]).forEach(binario => {
       let decimal:number = binarioDecimal(binario.join(""));
       tablaMarcados[decimal][0]++;
       tablaMarcados[decimal][1] = i;
     })
   }
   let resultadoBinario:Set<string> = new Set();
-  tablaMarcados.forEach(minitermino => {
-    if(minitermino[0] == 1){
-      resultadoBinario.add(primosImplicantes[minitermino[1]]);
-    }
-  })
-  let resultadoLetras: Array<string> = [];
+  tablaMarcados.forEach(minitermino => minitermino[0] == 1 ? resultadoBinario.add(PRM_IMP[minitermino[1]]) : null)
+  document.getElementById("resultado").innerHTML = mostrarResultadoLetras(resultadoBinario)
 
-  resultadoBinario.forEach(binario => {
-    let termino: string = "";
-    for(let i = 0; i < binario.length; i++ ){
-      if(binario[i] == "-")continue;
-      if(binario[i] == "0") termino += "~" + String.fromCharCode(65 + i); 
-      else termino += String.fromCharCode(65 + i);
-    }
-    resultadoLetras.push(termino);
-  })
-  console.log(resultadoLetras.join(" + "));
-
-}
-)();
+})
