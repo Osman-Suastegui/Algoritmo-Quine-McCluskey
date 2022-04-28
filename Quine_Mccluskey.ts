@@ -7,7 +7,7 @@ const decimalBinario = (numero: number, cantidadBits:number): string => {
   }
   while (binario.length < cantidadBits) {
     binario = "0" + binario;
-  }
+  } 
   return binario;
 }
 const binarioDecimal = (binario: string): number => {
@@ -114,13 +114,54 @@ const mostrarResultadoLetras = (resultadoBinario:Set<string>):string => {
 
    return resultadoLetras.join(" + ");
 }
+const mostrarGrupos = (grupos: string[][]):any => {
+  
+  let g = document.getElementById("grupos")
+  for(let i = 0 ; i < grupos.length;i++ ){
+    if (grupos[i].length == 0) continue;
+    let tabla = document.createElement("table");
+      //  pon en la tabla border 1
+    tabla.setAttribute("border", "1");
+    let tr = document.createElement("tr");
+    let th = document.createElement("th");
+    th.innerHTML = `Grupo ${i} `;
+    th.setAttribute("colspan", "2");
+    tr.appendChild(th);
+    tabla.appendChild(tr);
+   
+    for (let j = 0; j < grupos[i].length; j++) {
+      tr = document.createElement("tr");
+      let td1 = document.createElement("td");
+      let td2 = document.createElement("td");
+      let miniterminosNumeros:string = "";
+      convertirBinarioguion([...grupos[i][j]]).forEach(binario => {
+        miniterminosNumeros += binarioDecimal(binario.join("")) + ",";
+      });
+      td1.innerHTML = `(${miniterminosNumeros.slice(0, -1)})`
+      td2.innerHTML = grupos[i][j];
+      tr.appendChild(td1);
+      tr.appendChild(td2)
+      tabla.appendChild(tr)
+      g.appendChild(tabla)
+    }
+  }
+  let hr = document.createElement("hr");
+    hr.setAttribute("width", "100%");
+    g.appendChild(hr);
 
+}
 document.getElementById("btnCalcular")?.addEventListener("click", () => {
+  document.getElementById("grupos").innerHTML = "";
   let m:string = (<HTMLInputElement>document.getElementById("miniterminos")).value;
   console.log(m)
   // const prompt = require("prompt-sync")();
   let miniterminos:Array<number> = m.split(",").map(minitermino => parseInt(minitermino));
-  const cantidadVariables: number = contarCantidadVariables(Math.max(...miniterminos))
+  
+  let cantidadVariables: number = contarCantidadVariables(Math.max(...miniterminos))
+  if (miniterminos.length == 1 && miniterminos[0] == 0) {
+    cantidadVariables++;
+  }
+  console.log(cantidadVariables)
   let grupos: string[][] = [];
   let gruposAuxiliar: string[][] = [];
   for (let i = 0; i <= cantidadVariables; i++) {
@@ -133,6 +174,7 @@ document.getElementById("btnCalcular")?.addEventListener("click", () => {
   let PRM_IMP: Array<string> = [];
   
   while (seHizoAlgunaDiferencia) {
+    mostrarGrupos(grupos);
     let TODOS: Set<string> = new Set();
     grupos.forEach(grupo => grupo.forEach(binario => TODOS.add(binario)));
     let MARCADOS: Set<string> = new Set();
@@ -163,6 +205,7 @@ document.getElementById("btnCalcular")?.addEventListener("click", () => {
   }
   let resultadoBinario:Set<string> = new Set();
   tablaMarcados.forEach(minitermino => minitermino[0] == 1 ? resultadoBinario.add(PRM_IMP[minitermino[1]]) : null)
-  document.getElementById("resultado").innerHTML = mostrarResultadoLetras(resultadoBinario)
+  document.getElementById("primos-implicantes").innerHTML = "<strong>Primos implicantes: </strong>" +  [...resultadoBinario].join(",");
+  document.getElementById("resultado").innerHTML = "Resultado:  " + mostrarResultadoLetras(resultadoBinario)
 
 })

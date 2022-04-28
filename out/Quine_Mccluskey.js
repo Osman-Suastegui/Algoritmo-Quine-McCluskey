@@ -104,12 +104,51 @@ const mostrarResultadoLetras = (resultadoBinario) => {
     });
     return resultadoLetras.join(" + ");
 };
+const mostrarGrupos = (grupos) => {
+    let g = document.getElementById("grupos");
+    for (let i = 0; i < grupos.length; i++) {
+        if (grupos[i].length == 0)
+            continue;
+        let tabla = document.createElement("table");
+        //  pon en la tabla border 1
+        tabla.setAttribute("border", "1");
+        let tr = document.createElement("tr");
+        let th = document.createElement("th");
+        th.innerHTML = `Grupo ${i} `;
+        th.setAttribute("colspan", "2");
+        tr.appendChild(th);
+        tabla.appendChild(tr);
+        for (let j = 0; j < grupos[i].length; j++) {
+            tr = document.createElement("tr");
+            let td1 = document.createElement("td");
+            let td2 = document.createElement("td");
+            let miniterminosNumeros = "";
+            convertirBinarioguion([...grupos[i][j]]).forEach(binario => {
+                miniterminosNumeros += binarioDecimal(binario.join("")) + ",";
+            });
+            td1.innerHTML = `(${miniterminosNumeros.slice(0, -1)})`;
+            td2.innerHTML = grupos[i][j];
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tabla.appendChild(tr);
+            g.appendChild(tabla);
+        }
+    }
+    let hr = document.createElement("hr");
+    hr.setAttribute("width", "100%");
+    g.appendChild(hr);
+};
 (_a = document.getElementById("btnCalcular")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
+    document.getElementById("grupos").innerHTML = "";
     let m = document.getElementById("miniterminos").value;
     console.log(m);
     // const prompt = require("prompt-sync")();
     let miniterminos = m.split(",").map(minitermino => parseInt(minitermino));
-    const cantidadVariables = contarCantidadVariables(Math.max(...miniterminos));
+    let cantidadVariables = contarCantidadVariables(Math.max(...miniterminos));
+    if (miniterminos.length == 1 && miniterminos[0] == 0) {
+        cantidadVariables++;
+    }
+    console.log(cantidadVariables);
     let grupos = [];
     let gruposAuxiliar = [];
     for (let i = 0; i <= cantidadVariables; i++) {
@@ -121,6 +160,7 @@ const mostrarResultadoLetras = (resultadoBinario) => {
     let seHizoAlgunaDiferenciaAux = true;
     let PRM_IMP = [];
     while (seHizoAlgunaDiferencia) {
+        mostrarGrupos(grupos);
         let TODOS = new Set();
         grupos.forEach(grupo => grupo.forEach(binario => TODOS.add(binario)));
         let MARCADOS = new Set();
@@ -141,6 +181,7 @@ const mostrarResultadoLetras = (resultadoBinario) => {
     let tablaMarcados = [];
     for (let i = 0; i <= Math.pow(2, cantidadVariables); i++)
         tablaMarcados.push([0, 0]);
+    //MARCAMOS LA TABLA
     for (let i = 0; i < PRM_IMP.length; i++) {
         convertirBinarioguion([...PRM_IMP[i]]).forEach(binario => {
             let decimal = binarioDecimal(binario.join(""));
@@ -150,5 +191,6 @@ const mostrarResultadoLetras = (resultadoBinario) => {
     }
     let resultadoBinario = new Set();
     tablaMarcados.forEach(minitermino => minitermino[0] == 1 ? resultadoBinario.add(PRM_IMP[minitermino[1]]) : null);
-    document.getElementById("resultado").innerHTML = mostrarResultadoLetras(resultadoBinario);
+    document.getElementById("primos-implicantes").innerHTML = "<strong>Primos implicantes: </strong>" + [...resultadoBinario].join(",");
+    document.getElementById("resultado").innerHTML = "Resultado:  " + mostrarResultadoLetras(resultadoBinario);
 });

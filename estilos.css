@@ -3,3 +3,23 @@
     margin-top: 40px;
     text-align: center;
 }
+#grupos{
+    padding: 0px;
+    margin-top: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction:column;
+}
+#resultado{
+    margin: 3px;
+}
+#grupos > table{
+    /* center the content */
+    /* text-align: center; */
+    margin-top: 10px;
+    /* make it a bit wider */
+    width: 20%;
+    font-size: 12px;
+    
+}
