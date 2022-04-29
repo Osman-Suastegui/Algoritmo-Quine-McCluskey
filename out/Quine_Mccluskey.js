@@ -138,11 +138,64 @@ const mostrarGrupos = (grupos) => {
     hr.setAttribute("width", "100%");
     g.appendChild(hr);
 };
+const mostrarTablaMarcados = (PRM_IMP) => {
+    let binarioMiniterminos = new Map();
+    let todosLosTerminos = [];
+    for (let i = 0; i < PRM_IMP.length; i++) {
+        let terDecimal = [];
+        let res = convertirBinarioguion([...PRM_IMP[i]]);
+        for (let j = 0; j < res.length; j++) {
+            let decimal = binarioDecimal(res[j].join(""));
+            terDecimal.push(decimal);
+            todosLosTerminos.push(decimal);
+        }
+        binarioMiniterminos.set(PRM_IMP[i], terDecimal);
+    }
+    todosLosTerminos = todosLosTerminos.filter((elem, index, self) => index == self.indexOf(elem));
+    todosLosTerminos.sort();
+    let contenedorMarcados = document.getElementById("contenedor-marcados");
+    let tablaMarcados = document.createElement("table");
+    tablaMarcados.setAttribute("border", "1");
+    let th = document.createElement("th");
+    th.innerHTML = "Miniterminos";
+    tablaMarcados.appendChild(th);
+    for (let i = 0; i < todosLosTerminos.length; i++) {
+        th = document.createElement("th");
+        th.innerHTML = String(todosLosTerminos[i]);
+        tablaMarcados.appendChild(th);
+    }
+    let letras = "";
+    for (let i = 0; i < PRM_IMP[0].length; i++) {
+        letras += String.fromCharCode(65 + i) + ",";
+    }
+    th = document.createElement("th");
+    th.innerHTML = `(${letras.slice(0, -1)})`;
+    tablaMarcados.appendChild(th);
+    for (let i = 0; i < PRM_IMP.length; i++) {
+        let tr = document.createElement("tr");
+        let td = document.createElement("td");
+        let minis = binarioMiniterminos.get(PRM_IMP[i]);
+        td.innerHTML = binarioMiniterminos.get(PRM_IMP[i]).join(",");
+        tr.appendChild(td);
+        for (let j = 0; j < todosLosTerminos.length; j++) {
+            td = document.createElement("td");
+            td.innerHTML = " ";
+            if (minis.includes(todosLosTerminos[j])) {
+                td.innerHTML = "X";
+            }
+            tr.appendChild(td);
+        }
+        td = document.createElement("td");
+        td.innerHTML = PRM_IMP[i];
+        tr.appendChild(td);
+        tablaMarcados.appendChild(tr);
+    }
+    contenedorMarcados.innerHTML = "";
+    contenedorMarcados.appendChild(tablaMarcados);
+};
 (_a = document.getElementById("btnCalcular")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
     document.getElementById("grupos").innerHTML = "";
     let m = document.getElementById("miniterminos").value;
-    console.log(m);
-    // const prompt = require("prompt-sync")();
     let miniterminos = m.split(",").map(minitermino => parseInt(minitermino));
     let cantidadVariables = contarCantidadVariables(Math.max(...miniterminos));
     if (miniterminos.length == 1 && miniterminos[0] == 0) {
@@ -192,5 +245,6 @@ const mostrarGrupos = (grupos) => {
     let resultadoBinario = new Set();
     tablaMarcados.forEach(minitermino => minitermino[0] == 1 ? resultadoBinario.add(PRM_IMP[minitermino[1]]) : null);
     document.getElementById("primos-implicantes").innerHTML = "<strong>Primos implicantes: </strong>" + [...resultadoBinario].join(",");
-    document.getElementById("resultado").innerHTML = "Resultado:  " + mostrarResultadoLetras(resultadoBinario);
+    document.getElementById("resultado").innerHTML = "<strong>Resultado:</strong>  " + mostrarResultadoLetras(resultadoBinario);
+    mostrarTablaMarcados(PRM_IMP);
 });
